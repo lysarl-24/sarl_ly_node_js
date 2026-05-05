@@ -2,7 +2,8 @@ import { ProductService } from "../services/product.service.js";
 
 export const getAllProducts = (req, res) => {
     const products = ProductService.getAllProducts();
-    return res.status(200).json(products);
+    // return res.status(200).json(products);
+    return res.status(200).json({message: "Product created"});
 };
 
 export const getProductById = (req, res) => {
