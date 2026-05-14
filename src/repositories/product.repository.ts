@@ -1,45 +1,28 @@
-import Product, { type IProduct } from "../models/product.model.js";
+import { CreateProductInput, Product, ProductModel } from "../models/product.model.js";
 
-type ProductSeedInput = Pick<
-    IProduct,
-    "name" | "description" | "price" | "category" | "inStock" | "imageUrl"
->;
-
-const coffeeProducts: ProductSeedInput[] = [
-    {
-        name: "Espresso Classic",
-        description: "Strong single-shot espresso with rich crema.",
-        price: 2.5,
-        category: "coffee",
-        inStock: true,
-        imageUrl: "https://example.com/images/espresso-classic.jpg"
-    },
-    {
-        name: "Iced Caramel Latte",
-        description: "Smooth espresso, milk, and caramel over ice.",
-        price: 4.25,
-        category: "coffee",
-        inStock: true,
-        imageUrl: "https://example.com/images/iced-caramel-latte.jpg"
-    },
-    {
-        name: "Vietnamese Drip Coffee",
-        description: "Slow-dripped robusta with condensed milk.",
-        price: 3.75,
-        category: "coffee",
-        inStock: true,
-        imageUrl: "https://example.com/images/vietnamese-drip-coffee.jpg"
-    }
-];
-
-export const getAllProducts = async () => Product.find();
-
-export const seedCoffeeProducts = async () => {
-    const existingCoffee = await Product.countDocuments({ category: "coffee" });
-    if (existingCoffee > 0) {
-        return { inserted: 0, message: "Coffee products already exist." };
+export class ProductRespository {
+    static async getAll(): Promise<Product[]> {
+        const products = await ProductModel.find({}).lean<Product[]>();
+        return products;
     }
 
-    const insertedDocs = await Product.insertMany(coffeeProducts);
-    return { inserted: insertedDocs.length, message: "Coffee products seeded successfully." };
-};
+    static async getById(id: string): Promise<Product | null> {
+        const product = await ProductModel.findById(id).lean<Product | null>();
+        return product;
+    }
+
+    static async create(product: CreateProductInput): Promise<Product> {
+        const created = await ProductModel.create(product);
+        return created.toObject() as Product;
+    }
+
+    static async update(id: string, product: CreateProductInput): Promise<boolean> {
+        const result = await ProductModel.updateOne({ _id: id }, { $set: product });
+        return result.modifiedCount > 0;
+    }
+
+    static async delete(id: string): Promise<boolean> {
+        const result = await ProductModel.deleteOne({ _id: id });
+        return result.deletedCount > 0;
+    }
+}

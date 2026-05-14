@@ -1,9 +1,14 @@
 import { Router } from "express";
-import { getProductsController, seedCoffeeProductsController } from "../controllers/product.controller.js";
+import { ProductController } from "../controllers/product.controller.js";
 
-const productRouter = Router();
+const router = Router();
+const controller = new ProductController();
 
-productRouter.get("/", getProductsController);
-productRouter.post("/seed-coffee", seedCoffeeProductsController);
 
-export default productRouter;
+router.get("/", controller.getAll.bind(controller));
+router.post("/", controller.create.bind(controller));
+router.get("/:id", controller.getById.bind(controller));
+router.put("/:id", controller.update.bind(controller));
+router.delete("/:id", controller.delete.bind(controller));
+
+export default router;

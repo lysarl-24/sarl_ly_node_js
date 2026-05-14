@@ -1,14 +1,10 @@
 import express from "express";
-import router from "./routes/index.js";
-import { type Request, type Response } from "express";
+import routes from "./routes/index.js";
+
 
 const app = express();
 
 app.use(express.json());
-app.use("/api", router);
-
-app.get("/", (_req: Request, res: Response) => {
-    res.json({ message: "Coffee product API is running." });
-});
+app.use("/api", routes);
 
 export default app;
